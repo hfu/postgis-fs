@@ -5,6 +5,13 @@ const wkx = require('wkx')
 const fs = require('fs')
 const { spawnSync } = require('child_process')
 
+let modify
+if (fs.existsSync('./modify.js')) {
+  modify = require('./modify.js')
+} else {
+  modify = f => {return f}
+}
+
 const data = config.get('data')
 let pools = {}
 for (let database of Object.keys(data)) {
@@ -60,7 +67,7 @@ const pnd = async function (module) {
             geometry: g,
             properties: properties
           }
-          stream.write(JSON.stringify(f) + '\n')
+          stream.write(JSON.stringify(modify(f)) + '\n')
         })
         .on('error', err => {
           console.error(`${layer}/${module.join('-')} query: ${err.stack}`)
@@ -86,10 +93,8 @@ const pnd = async function (module) {
 }
 
 async function main () {
-  let ct = 0
   for (const module of config.get('modules')) {
-    ct += 1
-    console.log(`importing #${ct} ${module.join('-')}`)
+    console.log(`importing ${module.join('-')}`)
     if (!fs.existsSync(`${module.join('-')}.ndjson`)) {
       await pnd(module)
     }
