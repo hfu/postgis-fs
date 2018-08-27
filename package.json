@@ -1,0 +1,28 @@
+{
+  "name": "postgis-fs",
+  "version": "1.0.0",
+  "description": "PostGIS feature stream, from pnd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hfu/postgis-fs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/hfu/postgis-fs/issues"
+  },
+  "homepage": "https://github.com/hfu/postgis-fs#readme",
+  "dependencies": {
+    "@mapbox/tilebelt": "^1.0.1",
+    "child_process": "^1.0.2",
+    "config": "^2.0.1",
+    "hjson": "^3.1.1",
+    "pg": "^7.4.3",
+    "wkx": "^0.4.5"
+  }
+}
