@@ -55,7 +55,6 @@ FROM ${relation} JOIN envelope ON ${relation}.${geom} && envelope.geom
       layerCount--
       client.release()
       if (layerCount === 0) {
-        console.log('end')
         process.exit()
       }
     })
