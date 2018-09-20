@@ -13,13 +13,13 @@ const Y = Number(process.argv[5])
 const BBOX = tilebelt.tileToBBOX([X, Y, Z])
 let layerCount = config.data.length
 
-const featureDump = (row, geom, tippecanoe, modify) => {
+const featureDump = (row, tippecanoe, modify) => {
   let f = {
     type: 'Feature',
-    geometry: wkx.Geometry.parse(Buffer.from(row[geom], 'hex')).toGeoJSON(),
+    geometry: wkx.Geometry.parse(Buffer.from(row['_geom'], 'hex')).toGeoJSON(),
     tippecanoe: tippecanoe
   }
-  delete row[geom]
+  delete row['_geom']
   f.properties = row
   if (modify) { f = modify(f) }
   console.log(JSON.stringify(f))
@@ -41,11 +41,12 @@ const dump = async (database, relation, geom, props, tippecanoe, modify) => {
 WITH envelope AS 
   (SELECT ST_MakeEnvelope(${BBOX.join(', ')}, 4326) as geom) 
 SELECT ${props.join(', ')}${props.length === 0 ? '' : ', '} 
-  ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom) as geom 
-FROM ${relation} JOIN envelope ON ${relation}.${geom} && envelope.geom
+  ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom) AS _geom 
+FROM ${relation} JOIN envelope ON ${relation}.${geom} && envelope.geom 
+WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
 `))
     .on('row', row => {
-      featureDump(row, geom, tippecanoe, modify)
+      featureDump(row, tippecanoe, modify)
     })
     .on('error', err => {
       console.log(err.stack)
