@@ -64,10 +64,10 @@ WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
 const main = async () => {
   for (let datum of config.data) {
     const [database, relation] = datum[0].split('::')
-    const geom = datum[1]
-    const props = datum[2]
-    const tippecanoe = datum[3]
-    const modify = datum[4]
+    const props = datum[1]
+    const tippecanoe = datum[2]
+    const modify = datum[3]
+    const geom = datum[4] ? datum[4] : 'geom'
     if (Z < 6 && tippecanoe.minzoom >= 6) continue // safeguard
     dump(database, relation, geom, props, tippecanoe, modify)
   }
