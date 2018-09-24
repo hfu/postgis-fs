@@ -2,14 +2,16 @@ const tilebelt = require('@mapbox/tilebelt')
 const { Pool, Query } = require('pg')
 const wkx = require('wkx')
 
-if (process.argv.length !== 6) {
-  console.log('usage: node index.js {schema.js} {z} {x} {y}')
+if (process.argv.length < 6) {
+  console.log('usage: node index.js {schema.js} {z} {x} {y} {maxzoom}')
+  console.log('  - {maxzoom} is optional.')
   process.exit()
 }
 const schema = require(process.argv[2])
 const Z = Number(process.argv[3])
 const X = Number(process.argv[4])
 const Y = Number(process.argv[5])
+const MAX_ZOOM = Number(process.argv[6])
 const BBOX = tilebelt.tileToBBOX([X, Y, Z])
 let layerCount = schema.data.length
 
@@ -29,8 +31,8 @@ const featureDump = (row, tippecanoe, modify) => {
 }
 
 const dump = async (database, relation, geom, props, tippecanoe, modify) => {
-  if (tippecanoe.minzoom > Z) {
-    console.error(`skip ${relation} because ${tippecanoe.minzoom} > ${Z}.`)
+  if (MAX_ZOOM && tippecanoe.minzoom > MAX_ZOOM) {
+    console.error(`skip ${relation} because ${tippecanoe.minzoom} > ${MAX_ZOOM}.`)
     return
   }
   let pool = new Pool({
