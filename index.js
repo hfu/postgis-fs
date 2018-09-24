@@ -30,7 +30,7 @@ const featureDump = (row, tippecanoe, modify) => {
 
 const dump = async (database, relation, geom, props, tippecanoe, modify) => {
   if (tippecanoe.minzoom > Z) {
-    console.log(`skip ${relation} because ${tippecanoe.minzoom} > ${Z}.`)
+    console.error(`skip ${relation} because ${tippecanoe.minzoom} > ${Z}.`)
     return
   }
   let pool = new Pool({
