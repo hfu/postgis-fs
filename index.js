@@ -21,7 +21,10 @@ const featureDump = (row, tippecanoe, modify) => {
   }
   delete row['_geom']
   f.properties = row
-  if (modify) { f = modify(f) }
+  if (modify) {
+    f = modify(f)
+    if (!f) return
+  }
   console.log(JSON.stringify(f))
 }
 
