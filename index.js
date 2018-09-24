@@ -3,15 +3,15 @@ const { Pool, Query } = require('pg')
 const wkx = require('wkx')
 
 if (process.argv.length !== 6) {
-  console.log('usage: node index.js {config.js} {z} {x} {y}')
+  console.log('usage: node index.js {schema.js} {z} {x} {y}')
   process.exit()
 }
-const config = require(process.argv[2])
+const schema = require(process.argv[2])
 const Z = Number(process.argv[3])
 const X = Number(process.argv[4])
 const Y = Number(process.argv[5])
 const BBOX = tilebelt.tileToBBOX([X, Y, Z])
-let layerCount = config.data.length
+let layerCount = schema.data.length
 
 const featureDump = (row, tippecanoe, modify) => {
   let f = {
@@ -27,9 +27,9 @@ const featureDump = (row, tippecanoe, modify) => {
 
 const dump = async (database, relation, geom, props, tippecanoe, modify) => {
   let pool = new Pool({
-    host: config.host,
-    user: config.user,
-    password: config.password,
+    host: schema.host,
+    user: schema.user,
+    password: schema.password,
     database: database,
     max: 2
   })
@@ -62,7 +62,7 @@ WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
 }
 
 const main = async () => {
-  for (let datum of config.data) {
+  for (let datum of schema.data) {
     const [database, relation] = datum[0].split('::')
     const props = datum[1]
     const tippecanoe = datum[2]
