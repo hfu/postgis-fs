@@ -31,8 +31,9 @@ const featureDump = (row, tippecanoe, modify) => {
 }
 
 const dump = async (database, relation, geom, props, tippecanoe, modify) => {
+  //console.error(`${relation}: MAX_ZOOM=${MAX_ZOOM}, tippecanoe.minzoom=${JSON.stringify(tippecanoe)}`)
   if (MAX_ZOOM && tippecanoe.minzoom > MAX_ZOOM) {
-    console.error(`skip ${relation} because ${tippecanoe.minzoom} > ${MAX_ZOOM}.`)
+    console.error(`skip ${relation} because minzoom ${tippecanoe.minzoom} > MAX_ZOOM ${MAX_ZOOM}.`)
     return
   }
   let pool = new Pool({
@@ -77,7 +78,6 @@ const main = async () => {
     const tippecanoe = datum[2]
     const modify = datum[3]
     const geom = datum[4] ? datum[4] : 'geom'
-    if (Z < 6 && tippecanoe.minzoom >= 6) continue // safeguard
     dump(database, relation, geom, props, tippecanoe, modify)
   }
 }
