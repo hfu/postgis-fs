@@ -35,6 +35,8 @@ const dump = async (database, relation, geom, props, tippecanoe, modify) => {
   if (MAX_ZOOM && tippecanoe.minzoom > MAX_ZOOM) {
     console.error(`skip ${relation} because minzoom ${tippecanoe.minzoom} > MAX_ZOOM ${MAX_ZOOM}.`)
     return
+  } else {
+    console.error(`starting ${database}::${relation}`)
   }
   let pool = new Pool({
     host: schema.host,
