@@ -62,8 +62,9 @@ WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
       featureDump(row, tippecanoe, modify)
     })
     .on('error', err => {
-      console.log(err.stack)
-      client.release()
+      console.error(`data error in ${database}::${relation} for ${tippecanoe.layer}:`)
+      console.error(err.stack)
+      // client.release()
     })
     .on('end', () => {
       layerCount--
