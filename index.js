@@ -31,7 +31,7 @@ const featureDump = (row, tippecanoe, modify) => {
 }
 
 const dump = async (database, relation, geom, props, tippecanoe, modify) => {
-  //console.error(`${relation}: MAX_ZOOM=${MAX_ZOOM}, tippecanoe.minzoom=${JSON.stringify(tippecanoe)}`)
+  // console.error(`${relation}: MAX_ZOOM=${MAX_ZOOM}, tippecanoe.minzoom=${JSON.stringify(tippecanoe)}`)
   if (MAX_ZOOM && tippecanoe.minzoom > MAX_ZOOM) {
     console.error(`skip ${relation} because minzoom ${tippecanoe.minzoom} > MAX_ZOOM ${MAX_ZOOM}.`)
     return
@@ -47,6 +47,7 @@ const dump = async (database, relation, geom, props, tippecanoe, modify) => {
   })
   pool.on('error', (err, client) => {
     console.error(`unexpected error on ${database}`)
+    throw err
   })
   const client = await pool.connect()
   await client.query(new Query(`\
@@ -67,6 +68,7 @@ WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
     .on('end', () => {
       layerCount--
       client.release()
+      console.error(`finished ${database} ${relation}`)
       if (layerCount === 0) {
         process.exit()
       }
