@@ -59,8 +59,6 @@ SELECT
   (ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom)) AS _geom 
   FROM ${relation}
   JOIN envelope ON ${relation}.${geom} && envelope.geom 
-/*  WHERE 
-    (NOT ST_IsEmpty(ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom))) */
 `))
     .on('row', row => {
       featureDump(row, tippecanoe, modify)
