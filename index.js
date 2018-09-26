@@ -51,12 +51,16 @@ const dump = async (database, relation, geom, props, tippecanoe, modify) => {
   })
   const client = await pool.connect()
   await client.query(new Query(`\
-WITH envelope AS 
-  (SELECT ST_MakeEnvelope(${BBOX.join(', ')}, 4326) as geom) 
-SELECT ${props.join(', ')}${props.length === 0 ? '' : ', '} 
-  ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom) AS _geom 
-FROM ${relation} JOIN envelope ON ${relation}.${geom} && envelope.geom 
-WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
+WITH 
+  envelope AS 
+    (SELECT ST_MakeEnvelope(${BBOX.join(', ')}, 4326) AS geom)
+SELECT 
+  ${props.join(', ')}${props.length === 0 ? '' : ', '} 
+  (ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom)) AS _geom 
+  FROM ${relation}
+  JOIN envelope ON ${relation}.${geom} && envelope.geom 
+/*  WHERE 
+    (NOT ST_IsEmpty(ST_Intersection(ST_MakeValid(${relation}.${geom}), envelope.geom))) */
 `))
     .on('row', row => {
       featureDump(row, tippecanoe, modify)
@@ -64,7 +68,7 @@ WHERE NOT ST_IsEmpty(ST_Intersection(${relation}.${geom}, envelope.geom))
     .on('error', err => {
       console.error(`data error in ${database}::${relation} for ${tippecanoe.layer}:`)
       console.error(err.stack)
-      // client.release()
+      client.release()
     })
     .on('end', () => {
       layerCount--
