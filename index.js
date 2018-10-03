@@ -23,11 +23,16 @@ const featureDump = (row, tippecanoe, modify) => {
   }
   delete row['_geom']
   f.properties = row
-  if (modify) {
-    f = modify(f)
-    if (!f) return
+  if (modify) f = modify(f)
+  if (!f) {
+
+  } else if (Array.isArray(f)) {
+    for (const part of f) {
+      console.log(JSON.stringify(part))
+    }
+  } else {
+    console.log(JSON.stringify(f))
   }
-  console.log(JSON.stringify(f))
 }
 
 const dump = async (database, relation, geom, props, tippecanoe, modify) => {
