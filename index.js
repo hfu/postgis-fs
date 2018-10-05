@@ -41,7 +41,7 @@ const dump = async (database, relation, geom, props, tippecanoe, modify) => {
     console.error(`skip ${relation} because minzoom ${tippecanoe.minzoom} > MAX_ZOOM ${MAX_ZOOM}.`)
     return
   } else {
-    console.error(`starting ${database}::${relation}`)
+    // console.error(`starting ${database}::${relation}`)
   }
   let pool = new Pool({
     host: schema.host,
@@ -76,7 +76,7 @@ SELECT
     .on('end', () => {
       layerCount--
       client.release()
-      console.error(`finished ${database} ${relation}`)
+      // console.error(`finished ${database} ${relation}`)
       if (layerCount === 0) {
         process.exit()
       }
